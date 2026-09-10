@@ -1,0 +1,7 @@
+/target
+/bench-data
+*.tmp
+__pycache__/
+.venv/
+/tests/compatibility/.pairtools-venv/
+*.log

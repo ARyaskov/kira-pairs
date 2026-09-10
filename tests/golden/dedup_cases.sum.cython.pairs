@@ -1,0 +1,34 @@
+## pairs format v1.0.0
+#sorted: chr1-chr2-pos1-pos2
+#shape: upper triangle
+#chromsize: chr1 1000000
+#chromsize: chr2 1000000
+#columns: readID chrom1 pos1 chrom2 pos2 strand1 strand2 pair_type
+a	chr1	100	chr1	100	+	+	UU
+b	chr1	103	chr1	100	+	+	DD
+c	chr1	106	chr1	100	+	+	UU
+d	chr1	109	chr1	100	+	+	DD
+e	chr1	113	chr1	100	+	+	UU
+s1	chr1	200	chr1	200	+	-	UU
+s2	chr1	200	chr1	203	+	-	DD
+s3	chr1	200	chr1	206	+	-	UU
+s4	chr1	201	chr1	209	+	-	UU
+t1	chr1	300	chr1	300	-	-	UU
+t2	chr1	302	chr1	302	-	-	UU
+t3	chr1	303	chr1	305	-	-	UU
+t4	chr1	306	chr1	301	-	-	UU
+m1	chr1	400	chr1	400	+	+	UU
+m2	chr1	400	chr1	406	+	+	UU
+m3	chr1	401	chr1	403	+	+	UU
+m4	chr1	900	chr1	100	+	+	UU
+x1	chr1	1000	chr1	1000	+	+	UU
+x2	chr1	1000	chr1	1000	+	-	UU
+x3	chr1	1000	chr1	1000	-	+	UU
+x4	chr1	1000	chr1	1000	-	-	UU
+x5	chr1	1000	chr1	1000	+	+	DD
+y1	chr1	5000	chr2	5000	+	+	UU
+y2	chr1	5003	chr2	5003	+	+	UU
+y3	chr1	5003	chr2	5007	+	+	UU
+z1	chr2	10	chr2	20	+	+	UU
+z2	chr2	10	chr2	20	+	+	DD
+z3	chr2	10	chr2	20	+	+	DD

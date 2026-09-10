@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: "-D warnings"
+
+jobs:
+  check:
+    name: fmt, clippy, tests (Rust ${{ matrix.toolchain }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        toolchain: ["1.98.0", "stable"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install toolchain
+        run: |
+          rustup toolchain install ${{ matrix.toolchain }} --profile minimal -c rustfmt -c clippy
+          rustup override set ${{ matrix.toolchain }}
+      - uses: Swatinem/rust-cache@v2
+      - name: Format
+        run: cargo fmt --all -- --check
+      - name: Check
+        run: cargo check --all-targets --all-features
+      - name: Clippy
+        run: cargo clippy --all-targets --all-features -- -D warnings
+      - name: Tests
+        run: cargo test --all-features
+      - name: Release build
+        run: cargo build --release
+      - name: Smoke test CLI
+        run: |
+          ./target/release/kira-pairs --version
+          ./target/release/kira-pairs generate --records 20000 --seed 1 | ./target/release/kira-pairs sort --memory 64M | ./target/release/kira-pairs dedup --output-stats /dev/stdout -o /dev/null | head -3
+
+  pairtools-compat:
+    name: pairtools 1.1.3 differential tests
+    runs-on: ubuntu-latest
+    needs: check
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install toolchain
+        run: rustup toolchain install 1.98.0 --profile minimal && rustup override set 1.98.0
+      - uses: Swatinem/rust-cache@v2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install pairtools 1.1.3 and bgzip
+        run: |
+          sudo apt-get update && sudo apt-get install -y tabix
+          pip install "numpy<2.3" "pandas<3" scipy pysam pyyaml click cython
+          pip install --no-build-isolation "pairtools==1.1.2" || pip install --no-build-isolation "git+https://github.com/open2c/pairtools.git@v1.1.3"
+      - name: Build
+        run: cargo build --release
+      - name: Differential tests
+        run: python3 scripts/compare_pairtools.py --kira ./target/release/kira-pairs --pairtools pairtools --quick

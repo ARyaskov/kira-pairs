@@ -1,0 +1,71 @@
+## pairs format v1.0.0
+#sorted: chr1-chr2-pos1-pos2
+#shape: upper triangle
+#genome_assembly: unknown
+#chromsize: chr1 5000000
+#chromsize: chr2 3000000
+#chromsize: chrX 1000000
+#chromsize: chr10 2000000
+#chromsize: chrM 16569
+#samheader: @HD	VN:1.6	SO:queryname
+#samheader: @SQ	SN:chr1	LN:5000000
+#samheader: @SQ	SN:chr2	LN:3000000
+#samheader: @SQ	SN:chr10	LN:2000000
+#samheader: @SQ	SN:chrX	LN:1000000
+#samheader: @SQ	SN:chrM	LN:16569
+#samheader: @RG	ID:rg1	SM:sample1
+#samheader: @PG	ID:bwa	PN:bwa	VN:0.7.17-r1188	CL:bwa mem -SP5M ref.fa r1.fq r2.fq
+#samheader: @PG	ID:samtools	PN:samtools	PP:bwa	VN:1.24 (pysam)	CL:samtools view -b -o hic.bam hic.sam
+#samheader: @CO	synthetic fixture for kira-pairs
+#columns: readID chrom1 pos1 chrom2 pos2 strand1 strand2 pair_type
+read00161:DUP	chr1	100000	chr1	200101	+	-	DD
+read00336:DUP	chr1	100000	chr1	200101	+	-	DD
+read00098:DUP	chr1	100000	chr1	200105	+	-	DD
+read00343:DUP	chr1	100000	chr1	200105	+	-	DD
+read00119:DUP	chr1	100000	chr1	200107	+	-	DD
+read00154:DUP	chr1	100000	chr1	200107	+	-	DD
+read00260:DUP	chr1	100003	chr1	200099	+	-	DD
+read00162:DUP	chr1	100003	chr1	200103	+	-	DD
+read00302:DUP	chr1	100003	chr1	200103	+	-	DD
+read00337:DUP	chr1	100003	chr1	200103	+	-	DD
+read00064:DUP	chr1	100003	chr1	200107	+	-	DD
+read00051:DUP	chr1	100006	chr1	200101	+	-	DD
+read00156:DUP	chr1	100006	chr1	200101	+	-	DD
+read00317:DUP	chr1	100006	chr1	200103	+	-	DD
+read00219:DUP	chr1	100006	chr1	200107	+	-	DD
+read00359:DUP	chr1	100006	chr1	200107	+	-	DD
+read00394:DUP	chr1	100006	chr1	200107	+	-	DD
+read00115:DUP	chr1	100009	chr1	200099	+	-	DD
+read00192:DUP	chr1	100009	chr1	200103	+	-	DD
+read00367:DUP	chr1	100009	chr1	200103	+	-	DD
+read00038:DUP	chr1	100009	chr1	200105	+	-	DD
+read00108:DUP	chr1	100009	chr1	200105	+	-	DD
+read00213:DUP	chr1	100009	chr1	200105	+	-	DD
+read00024:DUP	chr1	100009	chr1	200107	+	-	DD
+read00164:DUP	chr1	100009	chr1	200107	+	-	DD
+read00116:DUP	chr1	100012	chr1	200101	+	-	DD
+read00186:DUP	chr1	100012	chr1	200101	+	-	DD
+read00291:DUP	chr1	100012	chr1	200101	+	-	DD
+read00396:DUP	chr1	100012	chr1	200101	+	-	DD
+read00102:DUP	chr1	100012	chr1	200103	+	-	DD
+read00053:DUP	chr1	100012	chr1	200105	+	-	DD
+read00088:DUP	chr1	100012	chr1	200105	+	-	DD
+read00263:DUP	chr1	100012	chr1	200105	+	-	DD
+read00298:DUP	chr1	100012	chr1	200105	+	-	DD
+read00039:DUP	chr1	100012	chr1	200107	+	-	DD
+read00144:DUP	chr1	100012	chr1	200107	+	-	DD
+read00179:DUP	chr1	100012	chr1	200107	+	-	DD
+read00389:DUP	chr1	100012	chr1	200107	+	-	DD
+read00082:DUP	chr1	100015	chr1	200103	+	-	DD
+read00103:DUP	chr1	100015	chr1	200105	+	-	DD
+read00313:DUP	chr1	100015	chr1	200105	+	-	DD
+read00124:DUP	chr1	100015	chr1	200107	+	-	DD
+read00229:DUP	chr1	100015	chr1	200107	+	-	DD
+read00334:DUP	chr1	100015	chr1	200107	+	-	DD
+read00020:DUP	chr1	100018	chr1	200099	+	-	DD
+read00090:DUP	chr1	100018	chr1	200099	+	-	DD
+read00195:DUP	chr1	100018	chr1	200099	+	-	DD
+read00181:DUP	chr1	100018	chr1	200101	+	-	DD
+read00356:DUP	chr1	100018	chr1	200101	+	-	DD
+read00328:DUP	chr1	100018	chr1	200105	+	-	DD
+read00034:DUP	chr1	100018	chr1	200107	+	-	DD

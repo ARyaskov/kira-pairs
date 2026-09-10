@@ -1,0 +1,24 @@
+## pairs format v1.0.0
+#shape: upper triangle
+#genome_assembly: test
+#chromsize: chr1 300000000
+#chromsize: chr2 250000000
+#chromsize: chr10 130000000
+#chromosomes: chr2 chr10 chr1
+#custom_field: round trip me
+#samheader: @SQ	SN:chr1	LN:300000000
+#samheader: @PG	ID:bwa	PN:bwa	VN:0.7.17
+# a free-form comment line
+#columns: readID chrom1 pos1 chrom2 pos2 strand1 strand2 pair_type mapq1 mapq2 note
+r1	chr10	5	chr10	9	+	+	UU	60	60	small
+r2	chr1	10	chr1	20	+	-	UU	60	60	tie1
+r3	chr1	10	chr1	20	+	-	UU	60	60	tie2
+r4	chr1	10	chr1	20	+	-	UR	60	60	pairtype-order
+r5	chr1	10	chr1	20	+	-	UU	60	60	tie3
+r6	chr2	4294967297	chr2	18446744073709551615	-	-	UU	1	2	huge
+r7	!	0	chr1	100	-	+	NU	0	30	single-sided
+r8	!	0	!	0	-	-	NN	0	0	unmapped
+r9	chr1	9	chr2	1	+	+	UU	10	20	trans
+r10	chr1	100	chr1	100	-	-	UU	60	60	self
+r11	chr1	100	chr10	5	+	-	UU	3	4	chr1-vs-chr10
+r12	chr1	2	chr1	1000000	+	+	UU	60	60	x
