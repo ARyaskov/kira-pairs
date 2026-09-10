@@ -32,7 +32,7 @@ Implemented in v0.1: `sort`, `flip`, `dedup`, `stats`, `select`, `bin`,
 Requires Rust 1.98.0 or newer (edition 2024, stable toolchain).
 
 ```bash
-git clone https://github.com/riaskov/kira-pairs
+git clone https://github.com/ARyaskov/kira-pairs
 cd kira-pairs
 cargo build --release
 ./target/release/kira-pairs --help

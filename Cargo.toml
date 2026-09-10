@@ -5,9 +5,9 @@ edition = "2024"
 rust-version = "1.98"
 license = "MIT"
 description = "High-performance, memory-bounded implementation of the core pairtools Hi-C .pairs workflow"
-repository = "https://github.com/riaskov/kira-pairs"
+repository = "https://github.com/ARyaskov/kira-pairs"
 keywords = ["hi-c", "genomics", "pairs", "pairtools", "bioinformatics"]
-categories = ["science", "command-line-utilities"]
+categories = ["science", "science::bioinformatics", "command-line-utilities"]
 readme = "README.md"
 default-run = "kira-pairs"
 
