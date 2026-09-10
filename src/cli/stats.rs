@@ -109,7 +109,13 @@ pub fn run(a: StatsArgs, ctx: &Context) -> Result<()> {
     if !a.no_chromsizes {
         acc.set_chromsizes(header.chromsizes()?);
     }
-    let mut parser = OrderedParser::new(body, Arc::new(cols), Arc::clone(&dict), res.threads);
+    let mut parser = OrderedParser::with_depth(
+        body,
+        Arc::new(cols),
+        Arc::clone(&dict),
+        res.threads,
+        res.budget.channel_depth(res.threads),
+    );
     let mut progress = Progress::new(ctx.progress, std::time::Duration::from_secs(5));
     let mut records = 0u64;
     while let Some(chunk) = parser.next_chunk()? {

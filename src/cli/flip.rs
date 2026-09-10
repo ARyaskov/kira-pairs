@@ -45,7 +45,13 @@ pub fn run(a: FlipArgs, ctx: &Context) -> Result<()> {
     let mut flipper = Flipper::new(order, &cols, Arc::clone(&dict));
     let mut writer = res.open_writer(stdio_path(&a.output))?;
     writer.write_header(&header)?;
-    let mut parser = OrderedParser::new(body, Arc::new(cols), Arc::clone(&dict), res.threads);
+    let mut parser = OrderedParser::with_depth(
+        body,
+        Arc::new(cols),
+        Arc::clone(&dict),
+        res.threads,
+        res.budget.channel_depth(res.threads),
+    );
     let mut progress = Progress::new(ctx.progress, std::time::Duration::from_secs(5));
     let mut ends = Vec::with_capacity(32);
     let mut out = Vec::with_capacity(256);

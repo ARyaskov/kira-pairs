@@ -137,8 +137,9 @@ impl ExternalSorter {
         // sorted and written.
         let run_capacity = (cfg.budget.records / 2).max(32 * 1024 * 1024) as usize;
 
-        let (block_tx, block_rx) = bounded::<LineBlock>(threads * 2);
-        let (chunk_tx, chunk_rx) = bounded::<ParsedChunk>(threads * 2);
+        let depth = cfg.budget.channel_depth(threads);
+        let (block_tx, block_rx) = bounded::<LineBlock>(depth);
+        let (chunk_tx, chunk_rx) = bounded::<ParsedChunk>(depth);
         let (run_tx, run_rx) = bounded::<Vec<ParsedChunk>>(0);
 
         let mut parsers = Vec::with_capacity(threads);

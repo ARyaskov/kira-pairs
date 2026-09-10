@@ -325,7 +325,13 @@ pub fn run(a: DedupArgs, ctx: &Context) -> Result<()> {
     };
     let mut deduper = Deduper::new(cfg, &dict);
     let cols = Arc::new(cols);
-    let mut parser = OrderedParser::new(body, Arc::clone(&cols), Arc::clone(&dict), res.threads);
+    let mut parser = OrderedParser::with_depth(
+        body,
+        Arc::clone(&cols),
+        Arc::clone(&dict),
+        res.threads,
+        res.budget.channel_depth(res.threads),
+    );
     let mut progress = Progress::new(ctx.progress, std::time::Duration::from_secs(5));
     let t0 = Instant::now();
     let mut records = 0u64;

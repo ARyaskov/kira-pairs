@@ -213,7 +213,13 @@ pub fn run(a: BinArgs, ctx: &Context) -> Result<()> {
         tmpdir: res.tmpdir.clone(),
     };
     let mut binner = Binner::new(cfg, Arc::clone(&dict))?;
-    let mut parser = OrderedParser::new(body, Arc::new(cols), Arc::clone(&dict), res.threads);
+    let mut parser = OrderedParser::with_depth(
+        body,
+        Arc::new(cols),
+        Arc::clone(&dict),
+        res.threads,
+        res.budget.channel_depth(res.threads),
+    );
     let mut progress = Progress::new(ctx.progress, std::time::Duration::from_secs(5));
     let mut ends = Vec::with_capacity(32);
     let mut records = 0u64;

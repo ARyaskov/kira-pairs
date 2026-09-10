@@ -78,6 +78,16 @@ impl MemoryBudget {
     /// Smallest budget accepted; below this the sorter cannot make progress.
     pub const MIN_TOTAL: u64 = 64 * 1024 * 1024;
 
+    /// Depth of the bounded reader -> parser -> consumer channels so that the
+    /// blocks in flight (two channels plus one block per worker, each block
+    /// resident twice while it is parsed) fit into the I/O buffer reserve.
+    pub fn channel_depth(&self, threads: usize) -> usize {
+        let block = crate::io::buffered::DEFAULT_BLOCK_SIZE as u64 * 2;
+        let in_flight = self.io_buffers / block;
+        let depth = in_flight.saturating_sub(threads as u64) / 2;
+        (depth as usize).clamp(1, threads.max(1) * 2)
+    }
+
     /// Derive a budget from a total and the thread counts that scale buffers.
     pub fn new(total: u64, threads: usize, io_threads: usize) -> Result<Self> {
         if total < Self::MIN_TOTAL {

@@ -28,14 +28,27 @@ pub struct OrderedParser {
 impl OrderedParser {
     /// Start reading `body` with `threads` parser workers.
     pub fn new(
-        mut body: BodyBlocks,
+        body: BodyBlocks,
         cols: Arc<ColumnMap>,
         dict: Arc<ChromDict>,
         threads: usize,
     ) -> Self {
+        Self::with_depth(body, cols, dict, threads, threads.max(1) * 2)
+    }
+
+    /// Like [`OrderedParser::new`] with an explicit channel depth (see
+    /// [`crate::memory::MemoryBudget::channel_depth`]).
+    pub fn with_depth(
+        mut body: BodyBlocks,
+        cols: Arc<ColumnMap>,
+        dict: Arc<ChromDict>,
+        threads: usize,
+        depth: usize,
+    ) -> Self {
         let threads = threads.max(1);
-        let (block_tx, block_rx) = bounded(threads * 2);
-        let (out_tx, out_rx) = bounded(threads * 2);
+        let depth = depth.max(1);
+        let (block_tx, block_rx) = bounded(depth);
+        let (out_tx, out_rx) = bounded(depth);
         let error = Arc::new(Mutex::new(None));
         let bytes_read = Arc::new(std::sync::atomic::AtomicU64::new(0));
         let mut handles = Vec::new();
