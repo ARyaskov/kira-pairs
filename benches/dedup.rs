@@ -18,11 +18,15 @@ fn sorted_keys(n: usize, dup_rate: f64) -> Vec<(PairKey, Vec<u8>)> {
         x ^= x >> 7;
         x ^= x << 17;
         let is_dup = !out.is_empty() && (x % 1000) as f64 / 1000.0 < dup_rate;
+        // Keep pos1 non-decreasing (block-sorted input): duplicates reuse the
+        // current pos1 with a small forward jitter, unique records advance.
         let (p1, p2) = if is_dup {
             let prev: &(PairKey, Vec<u8>) = &out[out.len() - 1];
-            (prev.0.pos1 + (x % 3), prev.0.pos2 + ((x >> 3) % 3))
+            let p1 = prev.0.pos1 + (x % 3);
+            pos1 = pos1.max(p1);
+            (p1, prev.0.pos2 + ((x >> 3) % 3))
         } else {
-            pos1 += (x >> 5) % 40;
+            pos1 += 3 + (x >> 5) % 40;
             (pos1, 1_000_000 + (x >> 9) % 100_000_000)
         };
         let k = PairKey {

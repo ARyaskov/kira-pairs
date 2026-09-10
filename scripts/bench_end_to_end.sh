@@ -9,6 +9,7 @@
 # Usage: bench_end_to_end.sh [--records N] [--threads N] [--memory SIZE]
 #        [--pairtools PATH] [--kira PATH] [--tmpdir DIR] [--out FILE] [--bam FILE --chroms FILE]
 set -euo pipefail
+export LC_ALL=C
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 RECORDS=10000000
 THREADS=$(nproc)
@@ -41,14 +42,11 @@ TIME=/usr/bin/time
 measure() { # label cmd...
   local label=$1; shift
   local tf="$WORK/time.$$"
-  local t0=$(date +%s.%N)
-  sync; echo 3 > /proc/sys/vm/drop_caches 2>/dev/null || true
+  sync; { echo 3 > /proc/sys/vm/drop_caches; } 2>/dev/null || true
   $TIME -f "%e\t%U\t%S\t%M" -o "$tf" bash -c "$*"
-  local t1=$(date +%s.%N)
   read -r wall user sys rss < "$tf"
-  local tmp_bytes=$(du -sb "$WORK" 2>/dev/null | cut -f1)
   printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "$(date -Iseconds)" "$label" "$RECORDS" "$wall" "$user" "$sys" "$rss" "$THREADS" >> "$OUT"
-  printf "%-45s wall %8.2fs  cpu %8.2fs  peakRSS %8.1f MB\n" "$label" "$wall" "$(echo "$user + $sys" | bc)" "$(echo "$rss / 1024" | bc -l)"
+  awk -v l="$label" -v w="$wall" -v u="$user" -v s="$sys" -v r="$rss" 'BEGIN { printf "%-50s wall %8.2fs  cpu %8.2fs  peakRSS %8.1f MB\n", l, w, u + s, r / 1024 }'
 }
 
 [ -f "$OUT" ] || printf "timestamp\tlabel\trecords\twall_s\tuser_s\tsys_s\tmax_rss_kb\tthreads\n" > "$OUT"
