@@ -178,9 +178,12 @@ read; they are not a public storage format and may change between versions.
 `--memory` is a budget, not a hint. It is split into a record budget (sort
 runs, bin tables), channel buffers, compression buffers and merge read-ahead;
 the sorter sizes its runs so that at most two runs are resident (one being
-filled, one being sorted/written). Peak RSS is predictable: a run of
-`--memory 64M` over a 100 MB file stays far below 512 MB in the test suite,
-and the number of runs and bytes written to `--tmpdir` are reported by
+filled, one being sorted/written), and input block sizes and channel depths
+shrink with the budget. Measured on a 1.8 GB input with 16 threads
+(`docs/BENCHMARKS.md`): peak RSS 396 MB at `--memory 512M`, 703 MB at 1G,
+1.4 GB at 2G, 2.6 GB at 4G. Below 512M a fixed per-thread overhead of
+roughly 250 MB dominates (470 MB at 256M); use fewer threads for tiny
+budgets. Run counts and bytes written to `--tmpdir` are reported by
 `--metrics`. The minimum accepted budget is 64M.
 
 ## Reproducibility
@@ -205,6 +208,15 @@ output carries no timestamps.
 * `#chromosomes:` is rewritten with the sorted names only; pairtools 1.1.3
   additionally emits a stray `:` token there (a pairtools bug).
 * No `.cool` writer; use `cooler load` on `bin` output.
+
+## Highest-value next optimisation
+
+Run generation currently sorts and serialises each run after it is full, so
+with very large budgets a single multi-GB run is sorted while parsing has
+already stopped (4G was slower than 2G on 30 M records). Sorting sub-chunks
+incrementally as they arrive (or capping run size at ~1 GB and merging more
+runs) would remove that tail; the merge itself is already an O(log k) loser
+tree fed by LZ4 blocks.
 
 ## Benchmark methodology
 

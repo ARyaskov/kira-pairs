@@ -116,8 +116,49 @@ dataset and all fixtures the two tools agree exactly.
 
 ## Memory-bounded sort at scale
 
-`scripts/verify_large_sort.sh --records 30000000 --memory 256M --threads 16
---max-fan-in 4`: 30 M records (1.83 GB of text) sorted with a 256 M budget and a
-deliberately tiny fan-in to force intermediate merge passes.
+Input: 30 M records (1.83 GB of text, 30 chromosomes) from
+`generate --records 30000000 --seed 9 --chromosomes 30`; `--threads 16`,
+temporary runs on the same NVMe volume, output to `/dev/null`, warm cache.
+Peak RSS from `/usr/bin/time`, run counts from `--metrics`.
 
-(filled in below)
+| `--memory` | Runs | Merge passes | Temp bytes written | Peak RSS | Wall |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 256M | 105 | 1 | 3.76 GB | 470 MB | 59.1 s |
+| 512M | 52 | 0 | 1.88 GB | 396 MB | 20.4 s |
+| 1G | 25 | 0 | 1.84 GB | 703 MB | 15.2 s |
+| 2G | 9 | 0 | 1.85 GB | 1403 MB | 9.5 s |
+| 4G | 3 | 0 | 1.41 GB | 2585 MB | 18.1 s |
+
+Observations:
+
+* From 512M upwards peak RSS stays below the budget (0.6-0.8× of it): the
+  record budget is deliberately split so that two runs plus channel,
+  compression and merge buffers fit. At 256M the fixed per-thread overhead
+  (16 parser workers each holding an input block and its parsed entries,
+  the run-writer pipeline, thread stacks and allocator arenas) dominates and
+  RSS is 1.8× the budget; the process still never held more than ~286 k
+  records in memory (`peak_records_buffered`). Use fewer threads for very
+  small budgets.
+* Temporary disk usage is about 1.0× the input for a single merge pass
+  (LZ4-compressed runs holding the line plus a 48-byte key) and grows by one
+  input size per additional pass; with the default fan-in of 64 the 256M run
+  needed one intermediate pass (105 runs).
+* Very large runs are slower than medium ones (4G: 3 runs, 18 s vs 2G: 9
+  runs, 9.5 s): sorting and writing one multi-GB run overlaps less with
+  parsing, and the final in-memory run is sorted after input ends. Budgets of
+  1-2G per 30 M records are the sweet spot on this machine; this is the
+  highest-value optimisation target for the next release (see README).
+* Correctness at scale: `scripts/verify_large_sort.sh --records 30000000
+  --memory 256M --max-fan-in 4` (105 runs, 3 merge passes, 7.5 GB of temporary
+  data) produced 30 000 000 records in pairtools order with the input multiset
+  conserved and no temporary files left behind; peak RSS 567 MB, 36.5 s.
+
+## Reproducing
+
+```bash
+cargo build --release
+scripts/setup_pairtools_oracle.sh .venv-pairtools
+cargo bench                                                     # microbenchmarks
+PAIRTOOLS=.venv-pairtools/bin/pairtools scripts/bench_end_to_end.sh --records 10000000 --threads 16 --memory 4G
+scripts/verify_large_sort.sh --records 30000000 --memory 256M --threads 16
+```
