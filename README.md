@@ -199,6 +199,9 @@ output carries no timestamps.
 * `stats --filter`, by-tile duplicate stats and pairsam-specific SAM-flag
   marking of duplicates are not implemented.
 * `sort --extra-col` compares extra columns lexicographically only.
+* `dedup` is exact (no chunking), so on very large inputs it finds the few
+  duplicate chains that pairtools' 10 000-row chunking misses (6 of 1.47 M on
+  the 10 M-record benchmark); outputs are otherwise identical.
 * `#chromosomes:` is rewritten with the sorted names only; pairtools 1.1.3
   additionally emits a stray `:` token there (a pairtools bug).
 * No `.cool` writer; use `cooler load` on `bin` output.

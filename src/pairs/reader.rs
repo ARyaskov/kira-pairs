@@ -55,8 +55,18 @@ pub struct PairsReader {
 impl PairsReader {
     /// Open a path (`None`/`-` = stdin) with automatic decompression.
     pub fn open(path: Option<&Path>, threads: usize) -> Result<Self> {
+        Self::open_with_block_size(path, threads, DEFAULT_BLOCK_SIZE)
+    }
+
+    /// Open with an explicit body block size (see
+    /// [`crate::memory::MemoryBudget::block_size`]).
+    pub fn open_with_block_size(
+        path: Option<&Path>,
+        threads: usize,
+        block_size: usize,
+    ) -> Result<Self> {
         let src = open_input(path, threads)?;
-        Self::from_reader(src.reader, &src.name, src.compression, DEFAULT_BLOCK_SIZE)
+        Self::from_reader(src.reader, &src.name, src.compression, block_size)
     }
 
     /// Wrap an arbitrary reader.

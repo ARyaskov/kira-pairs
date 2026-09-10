@@ -99,7 +99,11 @@ pub fn run(a: StatsArgs, ctx: &Context) -> Result<()> {
     }
     let mut metrics = Metrics::start();
     let input = a.input.first().cloned();
-    let reader = PairsReader::open(stdio_path(&input), res.io_threads)?;
+    let reader = PairsReader::open_with_block_size(
+        stdio_path(&input),
+        res.io_threads,
+        res.budget.block_size(res.threads),
+    )?;
     let (header, cols, body) = reader.into_parts();
     let dict = new_dict();
     let mut acc = StatsAccumulator::new(

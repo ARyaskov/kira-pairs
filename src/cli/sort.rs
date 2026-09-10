@@ -41,7 +41,11 @@ pub fn run(a: SortArgs, ctx: &Context) -> Result<()> {
     let res = Resources::from_opts(&a.res)?;
     let mut metrics = Metrics::start();
     let input = stdio_path(&a.input);
-    let reader = PairsReader::open(input, res.io_threads)?;
+    let reader = PairsReader::open_with_block_size(
+        input,
+        res.io_threads,
+        res.budget.block_size(res.threads),
+    )?;
     let (mut header, cols, body) = reader.into_parts();
     let name = body.name().to_string();
     append_pg(&mut header, "sort", ctx)?;

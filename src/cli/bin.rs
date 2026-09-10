@@ -191,7 +191,11 @@ pub fn run(a: BinArgs, ctx: &Context) -> Result<()> {
     } else {
         resolve_paths(&a.bins_out, &a.resolution, "--bins-out")?
     };
-    let reader = PairsReader::open(stdio_path(&a.input), res.io_threads)?;
+    let reader = PairsReader::open_with_block_size(
+        stdio_path(&a.input),
+        res.io_threads,
+        res.budget.block_size(res.threads),
+    )?;
     let (_header, cols, body) = reader.into_parts();
     let mapq_cols = match (cols.index_of("mapq1"), cols.index_of("mapq2")) {
         (Some(x), Some(y)) => Some((x, y)),

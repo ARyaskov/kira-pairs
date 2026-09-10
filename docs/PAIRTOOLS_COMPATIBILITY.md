@@ -56,12 +56,18 @@ headers after removing each tool's own `@PG` provenance record.
 
 Notes
 
-1. pairtools' scipy backend processes 10 000-row chunks with a 100-row
-   carry-over; a duplicate cluster straddling a chunk boundary can be missed
-   by pairtools ("the algorithm might miss a few duplicates", pairtools
-   docs). kira-pairs uses an exact sweep with no chunking, so on very large
-   inputs pairtools may report slightly *fewer* duplicates than kira-pairs.
-   Differential tests use inputs where the effect does not occur.
+1. pairtools' scipy backend processes 10 000-row chunks and carries over
+   only the last 100 *non-duplicate* rows; a duplicate whose only link to
+   its cluster is a duplicate in the previous chunk is missed ("the
+   algorithm might miss a few duplicates", pairtools docs). kira-pairs uses
+   an exact sweep with no chunking. Measured on the 10 M-record benchmark
+   dataset (`generate --seed 42 --duplicate-rate 0.15`): kira-pairs reports
+   1 470 982 duplicates, pairtools 1 470 976; the 6 extra records are all
+   found by pairtools' own metric when the chunking is removed, 5 of them
+   sit at row offset 0 of a pairtools chunk, and no record is reported by
+   pairtools only (`scripts/bench_end_to_end.sh` and the analysis in
+   `docs/BENCHMARKS.md`). Differential tests use inputs below one chunk
+   where both tools agree exactly.
 2. pairtools' cython backend stores parent indices relative to an internal
    buffer that is shifted without rebasing the indices, so `parent_readID`
    values are wrong after the first buffer shrink (observable on a 30-line

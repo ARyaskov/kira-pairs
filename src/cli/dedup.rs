@@ -242,7 +242,11 @@ pub fn run(a: DedupArgs, ctx: &Context) -> Result<()> {
         },
     };
     let input = stdio_path(&a.input);
-    let reader = PairsReader::open(input, res.io_threads)?;
+    let reader = PairsReader::open_with_block_size(
+        input,
+        res.io_threads,
+        res.budget.block_size(res.threads),
+    )?;
     let (mut header, cols, body) = reader.into_parts();
     let name = body.name().to_string();
     if !header.is_sorted() && !header.is_empty() {

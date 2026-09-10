@@ -31,9 +31,11 @@ pub struct ParsedChunk {
 }
 
 impl ParsedChunk {
-    /// Approximate resident size in bytes.
+    /// Approximate resident size in bytes while the chunk is part of a run
+    /// being sorted: the line data plus the entries, which exist twice (in
+    /// the chunk and in the concatenated sorted vector).
     pub fn memory_size(&self) -> usize {
-        self.data.capacity() + self.entries.capacity() * std::mem::size_of::<SortEntry>()
+        self.data.capacity() + 2 * self.entries.capacity() * std::mem::size_of::<SortEntry>()
     }
 
     /// Line bytes of an entry that belongs to this chunk.

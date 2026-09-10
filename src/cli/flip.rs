@@ -38,7 +38,11 @@ pub fn run(a: FlipArgs, ctx: &Context) -> Result<()> {
     let mut metrics = Metrics::start();
     let cs = ChromSizes::from_path(&a.chroms_path)?;
     let order = ChromOrder::from_chromsizes(&cs);
-    let reader = PairsReader::open(stdio_path(&a.input), res.io_threads)?;
+    let reader = PairsReader::open_with_block_size(
+        stdio_path(&a.input),
+        res.io_threads,
+        res.budget.block_size(res.threads),
+    )?;
     let (mut header, cols, body) = reader.into_parts();
     append_pg(&mut header, "flip", ctx)?;
     let dict = new_dict();
